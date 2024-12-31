@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Sign Recognition</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const fileInput = document.getElementById("image");
+            const errorMessage = document.getElementById("error-message");
+            const loader = document.getElementById("loader");
+
+            form.addEventListener("submit", function (e) {
+                const file = fileInput.files[0];
+                if (!file) {
+                    e.preventDefault();
+                    errorMessage.textContent = "Please select a file to upload.";
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    e.preventDefault();
+                    errorMessage.textContent = "File size must be less than 10 MB.";
+                    return;
+                }
+
+                const validFormats = ["image/jpeg", "image/png"];
+                if (!validFormats.includes(file.type)) {
+                    e.preventDefault();
+                    errorMessage.textContent = "Only JPG and PNG formats are allowed.";
+                    return;
+                }
+
+                errorMessage.textContent = "";
+                loader.classList.add("show");
+
+                setTimeout(function () {
+                    loader.classList.remove("show");
+                    form.submit();
+                }, 2000);
+
+                e.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+    <a href="/dashboard" class="home-btn">Home</a>
+    <h1>Upload an image of traffic sign</h1>
+    <div class="container">
+        <p class="instructions">The image must be in JPG or PNG format <br>The image should not exceed 10 MB in size.</p>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="image">Select Image:</label>
+                <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png" required>
+                <small class="tooltip">Supported formats: JPG, PNG</small>
+            </div>
+
+            <button type="submit">Recognize</button>
+        </form>
+
+        <div id="loader" class="loader">
+            <div class="bike"></div>
+            <p>Processing your image...</p>
+        </div>
+        <div id="error-message" class="error-message"></div>
+
+        {% if result %}
+        <div class="image-container">
+            <h2>Uploaded Image:</h2>
+            <img src="{{ file_url }}" alt="Uploaded Image" style="width: 300px; height: auto;">
+        </div>
+
+        <div class="result">
+            <h2>Prediction:</h2>
+            <p>{{ result }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

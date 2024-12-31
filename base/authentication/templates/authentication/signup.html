@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+</head>
+<body>
+    <a href="/" class="home-btn">Home</a>
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-dismissible">
+            <span>{{ message }}</span>
+            <button type="button" class="close" aria-label="Close" onclick="closeAlert(this)">
+                &times;
+            </button>
+        </div>
+        {% endfor %}
+        <h3 class="form-title">Create Your Account!</h3>
+        <form method="post" action="/signup" autocomplete="off" id="signupForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+                <p class="error username-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" name="fname" placeholder="Enter your first name">
+                <p class="error first-name-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" name="lname" placeholder="Enter your last name">
+                <p class="error last-name-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address">
+                <p class="error email-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="pass1">Password</label>
+                <input type="password" id="pass1" name="pass1" placeholder="Enter your password">
+                <p class="error password-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="pass2">Confirm Password</label>
+                <input type="password" id="pass2" name="pass2" placeholder="Confirm your password">
+                <p class="error confirm-password-error"></p>
+            </div>
+            <button type="submit" class="btn-primary" id="submitBtn">Sign Up</button>
+        </form>
+        <p class="user-link">
+            Already have an account? <a href="/signin">Log in now!</a>
+        </p>
+    </div>
+    <script>
+        function closeAlert(button) {
+            const alertBox = button.parentElement;
+            alertBox.style.opacity = '0';
+            setTimeout(() => alertBox.remove(), 300);
+        }
+        const form = document.getElementById("signupForm");
+        const username = document.getElementById("username");
+        const fname = document.getElementById("fname");
+        const lname = document.getElementById("lname");
+        const email = document.getElementById("email");
+        const pass1 = document.getElementById("pass1");
+        const pass2 = document.getElementById("pass2");
+
+        function validateEmptyFields() {
+            let allValid = true;
+            const fields = [
+                { element: username, errorClass: ".username-error", message: "Username cannot be empty." },
+                { element: fname, errorClass: ".first-name-error", message: "First Name cannot be empty." },
+                { element: lname, errorClass: ".last-name-error", message: "Last Name cannot be empty." },
+                { element: email, errorClass: ".email-error", message: "Email cannot be empty." },
+                { element: pass1, errorClass: ".password-error", message: "Password cannot be empty." },
+                { element: pass2, errorClass: ".confirm-password-error", message: "Confirm Password cannot be empty." }
+            ];
+
+            fields.forEach(({ element, errorClass, message }) => {
+                const error = document.querySelector(errorClass);
+                if (element.value.trim() === "") {
+                    error.textContent = message;
+                    error.style.color = "red";
+                    allValid = false;
+                } else {
+                    error.textContent = "";
+                }
+            });
+
+            return allValid;
+        }
+
+        function validateEmail() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const error = document.querySelector(".email-error");
+            if (email.value.trim() === "") {
+                error.textContent = "Email cannot be empty.";
+                error.style.color = "red";
+                return false;
+            } else if (!emailRegex.test(email.value)) {
+                error.textContent = "Enter a valid email address.";
+                error.style.color = "red";
+                return false;
+            }
+            error.textContent = "";
+            return true;
+        }
+
+        function validatePassword() {
+            const error = document.querySelector(".password-error");
+            const confirmError = document.querySelector(".confirm-password-error");
+            let valid = true;
+
+            if (pass1.value.length < 8) {
+                error.textContent = "Password must be at least 8 characters.";
+                error.style.color = "red";
+                valid = false;
+            } else {
+                error.textContent = "";
+            }
+
+            if (pass1.value !== pass2.value) {
+                confirmError.textContent = "Passwords do not match.";
+                confirmError.style.color = "red";
+                valid = false;
+            } else {
+                confirmError.textContent = "";
+            }
+
+            return valid;
+        }
+
+        form.addEventListener("submit", (event) => {
+            const isEmptyValid = validateEmptyFields();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            if (!(isEmptyValid && isEmailValid && isPasswordValid)) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

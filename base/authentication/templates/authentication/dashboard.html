@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Traffic Signboard Instructor</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">Traffic Signboard Instructor</a>
+        <ul>
+            {% if user.is_authenticated %}
+            <li><a href="/signout" class="navbar-link">Sign Out</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <section class="welcome-section">
+        <h1>Welcome, {{ user.username }}!</h1>
+        <p>Upload an image to recognize traffic signs and view results instantly.</p>
+    </section>
+
+    <main class="dashboard-main">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-upload feature-icon"></i>
+                <h2>Upload Traffic Signs</h2>
+                <p>Submit traffic sign images for instant recognition.</p>
+                <button onclick="window.location.href='/upload'" class="feature-button">Upload Now</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="links">
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Cookie Notice</a> | 
+                <a href="#">About</a> | 
+                <a href="#">Contact</a>
+            </div>
+            <p>&copy; 2024 Traffic Signboard Instructor. Powered by Infosys Springboard.</p>
+            <div class="social-links">
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

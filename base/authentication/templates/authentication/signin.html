@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}">
+</head>
+<body>
+    <a href="/" class="home-btn">Home</a>
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-dismissible {% if message.tags %}{{ message.tags }}{% endif %}">
+            <span><strong>Message:</strong> {{ message }}</span>
+            <button type="button" class="close" aria-label="Close" onclick="closeAlert(this)">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        <h3 class="form-title">Log In to Your Account!</h3>
+        <form method="post" action="/signin" autocomplete="off" id="signinForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+                <p class="error username-error"></p>
+            </div>
+            <div class="form-group">
+                <label for="pass1">Password</label>
+                <input type="password" id="pass1" name="pass1" placeholder="Enter your password">
+                <p class="error password-error"></p>
+            </div>
+            <button type="submit" class="btn-primary" id="signinBtn">Log In</button>
+        </form>
+        <p class="user-link">
+            New here? <a href="/signup">Sign up now!</a>
+        </p>
+    </div>
+    <script>
+        function closeAlert(button) {
+            const alertBox = button.parentElement;
+            alertBox.style.transition = 'opacity 0.3s ease';
+            alertBox.style.opacity = '0';
+            setTimeout(() => alertBox.remove(), 300);
+        }
+    
+        const form = document.getElementById("signinForm");
+        const username = document.getElementById("username");
+        const pass1 = document.getElementById("pass1");
+    
+        const usernameError = document.querySelector(".username-error");
+        const passwordError = document.querySelector(".password-error");
+    
+        function validateEmptyFields() {
+            let allValid = true;
+    
+            if (username.value.trim() === "") {
+                usernameError.textContent = "Username cannot be empty.";
+                usernameError.style.color = "red";
+                allValid = false;
+            } else {
+                usernameError.textContent = "";
+            }
+    
+            if (pass1.value.trim() === "") {
+                passwordError.textContent = "Password cannot be empty.";
+                passwordError.style.color = "red";
+                allValid = false;
+            } else {
+                passwordError.textContent = "";
+            }
+    
+            return allValid;
+        }
+    
+        form.addEventListener("submit", (event) => {
+            const isEmptyValid = validateEmptyFields();
+            if (!isEmptyValid) {
+                event.preventDefault(); 
+            }
+        });
+    </script>
+    
+    
+</body>
+</html>
